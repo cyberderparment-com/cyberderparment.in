@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            min-height: 100vh;
+            padding-top: 150px; /* Space for the fixed header */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        .header {
+            background-color: #004080;
+            color: white;
+            padding: 0px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            border-bottom: 4px solid #FFD700;
+            box-sizing: border-box;
+        }
+
+        .header .logo {
+            width: 90px;
+            vertical-align: middle;
+        }
+
+        .header .nav {
+            margin-top: 10px;
+        }
+
+        .header .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 5px;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+
+        .header .nav a:hover {
+            background-color: #003366;
+        }
+
+        .notice {
+            background-color: #003366;
+            color: #FFFFF0;
+            padding: 10px;
+            font-size: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            animation: marquee 15s linear infinite;
+            margin: 10px 0;
+        }
+
+        @keyframes marquee {
+            from { transform: translateX(100%); }
+            to { transform: translateX(-100%); }
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto 20px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            margin-top: 20px; /* Adjusted to start below the fixed header */
+        }
+
+        fieldset {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+
+        legend {
+            font-weight: bold;
+            font-size: 20px;
+            padding: 0 10px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: calc(100% - 22px);
+            padding: 12px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #004080;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #003366;
+        }
+
+        #imagePreview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        #imagePreview img {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #errorMessage {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .footer {
+            background-color: #004080;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            border-top: 5px solid #FFD700;
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .footer .links a {
+            color: white;
+            text-decoration: none;
+            padding: 0 10px;
+        }
+
+        .footer .links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Success message styling */
+        .success-message {
+            text-align: center;
+            margin-top: 150px; /* Space for the fixed header */
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            color: #004080;
+            font-size: 24px;
+            font-weight: bold;
+            display: none; /* Initially hidden */
+        }
+
+        /* Loading screen styling */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001; /* Ensure it's above everything else */
+            display: none; /* Initially hidden */
+        }
+
+        .loading-spinner {
+            border: 8px solid rgba(0, 0, 0, 0.1);
+            border-left: 8px solid #ffffff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="st.jpeg" alt="Logo" class="logo">
+        <div class="nav">
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Services</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="notice">Important Notice: Please ensure all details and images are accurately filled and uploaded. Compliance is mandatory.</div>
+    </div>
+
+    <div class="container" id="formContainer">
+        <form id="complaintForm">
+            <fieldset>
+                <legend>User Details</legend>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+                
+                <label for="country">Country:</label>
+                <input type="text" id="country" name="country" required>
+                
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" required>
+                
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+                
+                <label for="district">District:</label>
+                <input type="text" id="district" name="district" required>
+                
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" required>
+                
+                <label for="education">Education:</label>
+                <input type="text" id="education" name="education" required>
+            </fieldset>
+            
+            <fieldset>
+                <legend>Complaint Details</legend>
+                <label for="complaint">Complaint:</label>
+                <textarea id="complaint" name="complaint" rows="4" required></textarea>
+            </fieldset>
+            
+            <fieldset>
+                <legend>Enter Victim Images</legend>
+                <input type="file" id="imageUpload" multiple accept="image/*" onchange="handleFileSelect(event)">
+                <div id="imagePreview"></div>
+                <p id="imageCount">Upload up to 10 images.</p>
+            </fieldset>
+            
+            <button type="submit">Submit Complaint</button>
+        </form>
+        
+        <div id="errorMessage" class="hidden">
+            <p>Something went wrong. Please ensure all images are uploaded correctly.</p>
+            <button onclick="reloadPage()">Go Back</button>
+        </div>
+    </div>
+
+    <div class="success-message" id="successMessage">
+        Complaint Registered Successfully!
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Indian Cyber Department. All rights reserved.</p>
+        <div class="links">
+            <a href="#">Privacy Policy</a> | 
+            <a href="#">Terms of Service</a> | 
+            <a href="#">Contact Us</a>
+        </div>
+    </div>
+
+    <script>
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.innerHTML = ''; // Clear previous previews
+
+            if (files.length > 10) {
+                alert('Please upload up to 10 images only.');
+                event.target.value = ''; // Clear the input
+                return;
+            }
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    imagePreview.appendChild(img);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('complaintForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Show loading overlay
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            setTimeout(() => {
+                // Simulate an error
+                document.getElementById('loadingOverlay').style.display = 'none';
+                document.getElementById('formContainer').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+            }, 5000); // Simulate a delay of 3 seconds
+        });
+
+        function reloadPage() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
