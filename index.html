@@ -4,111 +4,156 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complaint Registration</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             margin: 0;
             padding: 0;
-            position: relative;
             min-height: 100vh;
             padding-top: 150px;
             overflow-x: hidden;
         }
+
         .header {
             background-color: #004080;
             color: white;
-            text-align: center;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
             border-bottom: 4px solid #FFD700;
+            text-align: center;
         }
-        .header .logo { width: 90px; }
-        .header .nav a {
+
+        .header .logo {
+            width: 90px;
+        }
+
+        .nav a {
             color: white;
+            padding: 5px 10px;
             text-decoration: none;
-            padding: 5px;
-            font-size: 16px;
         }
+
+        .nav a:hover {
+            background-color: #003366;
+            border-radius: 4px;
+        }
+
         .notice {
             background-color: #003366;
-            color: #FFFFF0;
+            color: #fff;
             padding: 10px;
             animation: marquee 15s linear infinite;
             white-space: nowrap;
+            overflow: hidden;
         }
+
         @keyframes marquee {
             from { transform: translateX(100%); }
             to { transform: translateX(-100%); }
         }
+
         .container {
             width: 80%;
             margin: auto;
-            padding: 20px;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-        }
-        fieldset {
-            border: 1px solid #ddd;
-            border-radius: 8px;
             padding: 20px;
-            margin-bottom: 20px;
-            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,.3);
         }
-        label { display: block; font-weight: bold; margin-top: 10px; }
+
+        fieldset {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        legend {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
         input, textarea {
             width: 100%;
             padding: 12px;
-            margin-top: 5px;
+            margin-top: 10px;
         }
+
         button {
+            width: 100%;
             padding: 12px;
-            background-color: #004080;
+            background: #004080;
             color: white;
             border: none;
-            width: 100%;
             cursor: pointer;
         }
+
+        button:hover {
+            background: #003366;
+        }
+
+        #imagePreview {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
         #imagePreview img {
             width: 150px;
             height: 100px;
             object-fit: cover;
-            margin: 5px;
+            border-radius: 4px;
         }
-        .success-message {
-            display: none;
-            text-align: center;
-            margin-top: 150px;
-            font-size: 24px;
-            color: #004080;
-        }
+
         .loading-overlay {
-            display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,.7);
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 2000;
         }
+
         .loading-spinner {
             width: 50px;
             height: 50px;
-            border: 6px solid #ccc;
-            border-top: 6px solid white;
+            border: 8px solid #ccc;
+            border-left-color: white;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            font-size: 24px;
+            margin-top: 100px;
+            font-weight: bold;
+            color: #004080;
+        }
+
+        .footer {
+            background: #004080;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+            border-top: 5px solid #FFD700;
         }
     </style>
 </head>
 
 <body>
+
 <div class="header">
     <img src="st.jpeg" class="logo">
     <div class="nav">
@@ -117,7 +162,9 @@
         <a href="#">Services</a>
         <a href="#">Contact</a>
     </div>
-    <div class="notice">Important Notice: Please ensure all details and images are accurately filled and uploaded.</div>
+    <div class="notice">
+        Important Notice: Please ensure all details and images are accurately filled and uploaded.
+    </div>
 </div>
 
 <div class="container" id="formContainer">
@@ -135,13 +182,13 @@
         </fieldset>
 
         <fieldset>
-            <legend>Complaint</legend>
-            <textarea required rows="4"></textarea>
+            <legend>Complaint Details</legend>
+            <textarea rows="4" required placeholder="Complaint"></textarea>
         </fieldset>
 
         <fieldset>
             <legend>Enter Victim Images</legend>
-            <input type="file" id="imageUpload" multiple accept="image/*" onchange="handleFileSelect(event)">
+            <input type="file" id="imageUpload" multiple accept="image/*">
             <div id="imagePreview"></div>
         </fieldset>
 
@@ -157,64 +204,62 @@
     <div class="loading-spinner"></div>
 </div>
 
-<script>
-const CLOUD_NAME = "dspfi07ar";
-const UPLOAD_PRESET = "complaints_upload";
+<div class="footer">
+    © 2024 Indian Cyber Department. All rights reserved.
+</div>
 
-function handleFileSelect(event) {
+<script>
+const CLOUD_NAME = "dspfio7ar";
+const UPLOAD_PRESET = "complaints_upload";
+const uploadedImageUrls = [];
+
+document.getElementById("imageUpload").addEventListener("change", async (e) => {
+    const files = e.target.files;
     const preview = document.getElementById("imagePreview");
     preview.innerHTML = "";
-    for (let file of event.target.files) {
+
+    if (files.length > 10) {
+        alert("Maximum 10 images allowed");
+        e.target.value = "";
+        return;
+    }
+
+    for (const file of files) {
         const reader = new FileReader();
-        reader.onload = e => {
+        reader.onload = ev => {
             const img = document.createElement("img");
-            img.src = e.target.result;
+            img.src = ev.target.result;
             preview.appendChild(img);
         };
         reader.readAsDataURL(file);
-    }
-}
 
-async function uploadImages(files) {
-    const urls = [];
-    const folder = "complaint_" + Date.now();
-
-    for (let file of files) {
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("upload_preset", UPLOAD_PRESET);
-        fd.append("folder", "complaints_images/" + folder);
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", UPLOAD_PRESET);
 
         const res = await fetch(
             `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-            { method: "POST", body: fd }
+            { method: "POST", body: formData }
         );
 
-        if (!res.ok) throw new Error("Upload failed");
-
         const data = await res.json();
-        urls.push(data.secure_url);
+        uploadedImageUrls.push(data.secure_url);
+        console.log("Uploaded:", data.secure_url);
     }
-    return urls;
-}
+});
 
-document.getElementById("complaintForm").addEventListener("submit", async e => {
+document.getElementById("complaintForm").addEventListener("submit", (e) => {
     e.preventDefault();
     document.getElementById("loadingOverlay").style.display = "flex";
 
-    try {
-        const files = document.getElementById("imageUpload").files;
-        const imageUrls = await uploadImages(files);
-        console.log("Saved images:", imageUrls);
-
+    setTimeout(() => {
         document.getElementById("loadingOverlay").style.display = "none";
         document.getElementById("formContainer").style.display = "none";
         document.getElementById("successMessage").style.display = "block";
-    } catch (err) {
-        alert("Image upload failed");
-        document.getElementById("loadingOverlay").style.display = "none";
-    }
+        console.log("All image URLs:", uploadedImageUrls);
+    }, 2000);
 });
 </script>
+
 </body>
 </html>
